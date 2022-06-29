@@ -2,6 +2,7 @@ import Square, { SquareState } from "../Square/Square";
 import { Color, PieceType } from "../consts";
 import "./Board.css";
 import { MouseEvent, useState, useRef } from "react";
+import validMoves from "../Moves/moves";
 
 const getInitialBoard = () => {
   let board: SquareState[] = [];
@@ -50,6 +51,7 @@ export default function Board() {
   const [board, updateBoard] = useState(initalBoard);
   const [grabbedPiece, setGrabbedPiece] = useState<HTMLElement | null>(null);
   const [grabbedSquare, setGrabbedSquare] = useState<number | null>(null);
+  const droppableSquares = useRef<number[]>([]);
 
   const chessboardRef = useRef<HTMLDivElement>(null);
   const currentPlayerRef = useRef<Color>(Color.WHITE);
@@ -72,6 +74,15 @@ export default function Board() {
     if (element.classList.contains("chess-piece") && currentPlayerRef.current === board[sqIdx].color) {
       setGrabbedPiece(element);
       setGrabbedSquare(sqIdx);
+      droppableSquares.current = validMoves(board, sqIdx);
+
+      updateBoard(oldBoard => {
+        for (const idx in droppableSquares.current) {
+          const sqIdx = droppableSquares.current[idx];
+          oldBoard[sqIdx] = {...oldBoard[sqIdx], highlighted: true};
+        }
+        return oldBoard;
+      })
     }
   };
 
@@ -98,19 +109,23 @@ export default function Board() {
       const row = Math.floor((e.clientY - chessboard.offsetTop) / 60);
       const droppedSquare = row * 8 + col;
 
+      
+      let newBoard = board;
+
       if (
         e.clientX >= minLeft &&
         e.clientX <= maxLeft &&
         e.clientY >= minTop &&
         e.clientY <= maxTop &&
-        grabbedSquare !== droppedSquare
+        grabbedSquare !== droppedSquare &&
+        droppableSquares.current.includes(droppedSquare)
       ) {
-        let newBoard = board;
         newBoard[droppedSquare].piece = board[grabbedSquare].piece;
         newBoard[droppedSquare].color = board[grabbedSquare].color;
         newBoard[grabbedSquare].piece = PieceType.NONE;
+        newBoard[grabbedSquare].color = null;
 
-        updateBoard(newBoard);
+        // updateBoard(newBoard);
         currentPlayerRef.current = (currentPlayerRef.current === Color.WHITE) ? Color.BLACK : Color.WHITE;
 
       } else {
@@ -118,10 +133,17 @@ export default function Board() {
         grabbedPiece.style.top = "0px";
         grabbedPiece.style.left = "0px";
       }
+
+      for (const idx in droppableSquares.current) {
+        const sqIdx = droppableSquares.current[idx];
+        newBoard[sqIdx] = {...newBoard[sqIdx], highlighted: false};
+      }
+      updateBoard(newBoard);
     }
 
     setGrabbedPiece(null);
     setGrabbedSquare(null);
+    droppableSquares.current = [];
   };
 
   return (
