@@ -1,0 +1,36 @@
+.cell {
+    height: 60px;
+    width: 60px;
+    display: inline-block;
+    padding: 0px;
+    margin: 0px;
+}
+
+.cell-white {
+    background-color: rgb(179, 179, 179);
+}
+
+.cell-black {
+    background-color: rgb(94, 94, 94);
+}
+
+.cell-white-highlighted {
+    background-color: #43ff81;
+}
+
+.cell-black-highlighted {
+    background-color: #0bda50;
+}
+
+.chess-piece {
+    height: 60px;
+    width: 60px;
+}
+
+.chess-piece:hover {
+    cursor: grab;
+}
+
+.chess-piece:active {
+    cursor: grabbing;
+}
