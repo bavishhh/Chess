@@ -12,8 +12,7 @@ const getInitialBoard = () => {
       const squareState: SquareState = {
         row: row,
         col: col,
-        color: null,
-        piece: PieceType.NONE,
+        piece: {type: PieceType.NONE},
       };
       board.push(squareState);
     }
@@ -21,26 +20,26 @@ const getInitialBoard = () => {
 
   // Place the pieces in starting position
   for (let i = 0; i < 8; i++) {
-    board[8 + i] = {...board[8 + i], piece: PieceType.PAWN, color: Color.BLACK}
-    board[8*6 + i] = {...board[8*6 + i], piece: PieceType.PAWN, color: Color.WHITE}
+    board[8 + i] = {...board[8 + i], piece: {type: PieceType.PAWN, color: Color.BLACK}}
+    board[8*6 + i] = {...board[8*6 + i], piece: {type: PieceType.PAWN, color: Color.WHITE}}
   }
-  board[0] = {...board[0], piece: PieceType.ROOK, color: Color.BLACK};
-  board[1] = {...board[1], piece: PieceType.KNIGHT, color: Color.BLACK};
-  board[2] = {...board[2], piece: PieceType.BISHOP, color: Color.BLACK};
-  board[3] = {...board[3], piece: PieceType.QUEEN, color: Color.BLACK};
-  board[4] = {...board[4], piece: PieceType.KING, color: Color.BLACK};
-  board[5] = {...board[5], piece: PieceType.BISHOP, color: Color.BLACK};
-  board[6] = {...board[6], piece: PieceType.KNIGHT, color: Color.BLACK};
-  board[7] = {...board[7], piece: PieceType.ROOK, color: Color.BLACK};
+  board[0] = {...board[0], piece: {type: PieceType.ROOK, color: Color.BLACK}};
+  board[1] = {...board[1], piece: {type: PieceType.KNIGHT, color: Color.BLACK}};
+  board[2] = {...board[2], piece: {type: PieceType.BISHOP, color: Color.BLACK}};
+  board[3] = {...board[3], piece: {type: PieceType.QUEEN, color: Color.BLACK}};
+  board[4] = {...board[4], piece: {type: PieceType.KING, color: Color.BLACK}};
+  board[5] = {...board[5], piece: {type: PieceType.BISHOP, color: Color.BLACK}};
+  board[6] = {...board[6], piece: {type: PieceType.KNIGHT, color: Color.BLACK}};
+  board[7] = {...board[7], piece: {type: PieceType.ROOK, color: Color.BLACK}};
 
-  board[8*7 + 0] = {...board[8*7 + 0], piece: PieceType.ROOK, color: Color.WHITE};
-  board[8*7 + 1] = {...board[8*7 + 1], piece: PieceType.KNIGHT, color: Color.WHITE};
-  board[8*7 + 2] = {...board[8*7 + 2], piece: PieceType.BISHOP, color: Color.WHITE};
-  board[8*7 + 3] = {...board[8*7 + 3], piece: PieceType.QUEEN, color: Color.WHITE};
-  board[8*7 + 4] = {...board[8*7 + 4], piece: PieceType.KING, color: Color.WHITE};
-  board[8*7 + 5] = {...board[8*7 + 5], piece: PieceType.BISHOP, color: Color.WHITE};
-  board[8*7 + 6] = {...board[8*7 + 6], piece: PieceType.KNIGHT, color: Color.WHITE};
-  board[8*7 + 7] = {...board[8*7 + 7], piece: PieceType.ROOK, color: Color.WHITE};
+  board[8*7 + 0] = {...board[8*7 + 0], piece: {type: PieceType.ROOK, color: Color.WHITE}};
+  board[8*7 + 1] = {...board[8*7 + 1], piece: {type: PieceType.KNIGHT, color: Color.WHITE}};
+  board[8*7 + 2] = {...board[8*7 + 2], piece: {type: PieceType.BISHOP, color: Color.WHITE}};
+  board[8*7 + 3] = {...board[8*7 + 3], piece: {type: PieceType.QUEEN, color: Color.WHITE}};
+  board[8*7 + 4] = {...board[8*7 + 4], piece: {type: PieceType.KING, color: Color.WHITE}};
+  board[8*7 + 5] = {...board[8*7 + 5], piece: {type: PieceType.BISHOP, color: Color.WHITE}};
+  board[8*7 + 6] = {...board[8*7 + 6], piece: {type: PieceType.KNIGHT, color: Color.WHITE}};
+  board[8*7 + 7] = {...board[8*7 + 7], piece: {type: PieceType.ROOK, color: Color.WHITE}};
 
   return board;
 };
@@ -71,7 +70,7 @@ export default function Board() {
 
   const grabPiece = (e: MouseEvent, sqIdx: number) => {
     const element = e.target as HTMLElement;
-    if (element.classList.contains("chess-piece") && currentPlayerRef.current === board[sqIdx].color) {
+    if (element.classList.contains("chess-piece") && currentPlayerRef.current === board[sqIdx].piece.color) {
       setGrabbedPiece(element);
       setGrabbedSquare(sqIdx);
       droppableSquares.current = validMoves(board, sqIdx);
@@ -120,10 +119,9 @@ export default function Board() {
         grabbedSquare !== droppedSquare &&
         droppableSquares.current.includes(droppedSquare)
       ) {
-        newBoard[droppedSquare].piece = board[grabbedSquare].piece;
-        newBoard[droppedSquare].color = board[grabbedSquare].color;
-        newBoard[grabbedSquare].piece = PieceType.NONE;
-        newBoard[grabbedSquare].color = null;
+        newBoard[droppedSquare].piece.type = board[grabbedSquare].piece.type;
+        newBoard[droppedSquare].piece.color = board[grabbedSquare].piece.color;
+        newBoard[grabbedSquare].piece.type = PieceType.NONE;
 
         // updateBoard(newBoard);
         currentPlayerRef.current = (currentPlayerRef.current === Color.WHITE) ? Color.BLACK : Color.WHITE;

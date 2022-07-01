@@ -1,11 +1,15 @@
 import { Color, PieceType } from "../consts";
 import './Square.css';
 
+export type Piece = {
+  type: PieceType;
+  color?: Color;
+}
+
 export type SquareState = {
     row: number;
     col: number;
-    piece: number;
-    color: Color | null;
+    piece: Piece;
     highlighted?: boolean;
 }
 
@@ -17,8 +21,8 @@ export default function Square(props: SquareState) {
 
     let piece = null;
     if (props.piece) {
-        if (props.color === Color.WHITE) {
-            switch(props.piece) {
+        if (props.piece.color === Color.WHITE) {
+            switch(props.piece.type) {
               case PieceType.PAWN:
                 piece = 'assets/pawn_w.png'
                 break;
@@ -39,8 +43,8 @@ export default function Square(props: SquareState) {
                 break
             }
         }
-        else if (props.color === Color.BLACK) {
-          switch(props.piece) {
+        else if (props.piece.color === Color.BLACK) {
+          switch(props.piece.type) {
             case PieceType.PAWN:
               piece = 'assets/pawn_b.png'
               break;
